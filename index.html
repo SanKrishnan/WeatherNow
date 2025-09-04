@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>WeatherNow</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS';
+            text-align: center;
+            margin: 20px auto;
+            padding: 50px;
+            background: #023047;
+            color: whitesmoke;
+        }
+        h1 {
+            text-align: center;
+            color: #12d3d0;
+            margin-bottom: 30px;
+            margin: 30px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding: 40px;
+        }
+        input[type="text"] {
+            padding: 15px;
+            font-size: 14px;
+            border: 2px solid #0077cc;
+            border-radius: 4px;
+            transition: border-color 0.3s;
+            width: 150px;
+            box-sizing: border-box;
+        }
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #004a80;
+        }
+        button {
+            background: #078e8b;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+            width: 150px;
+            margin-top: 10px;
+        }
+        button:hover {
+            background: #005999;
+        }
+        h1:hover {
+            color: #005999;
+            display: inline-block;
+        }
+
+        #error {
+            text-align: center;
+            font-weight: bold;
+            color: red;
+            margin-top: 10px;
+        }
+        #weather-result {
+            position: relative;
+            display: none;
+            margin-top: 10px;
+        }
+        #weather-result h2 {
+            color: whitesmoke;
+        }
+        #weather-result img {
+            width: 100px;
+            height: 100px;
+            margin-top: 5px;
+            position: relative;
+            z-index: 10;
+        }
+        #weather-animation {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 100px;
+            z-index: 5;
+            pointer-events: none;
+            display: none;
+        }
+        .rain {
+            pointer-events: none;
+            position: absolute;
+            width: 80px;
+            height: 100px;
+            overflow: visible;
+            z-index: 5;
+        }
+        .rain-drop {
+            position: absolute;
+            bottom: 100%;
+            width: 2px;
+            height: 15px;
+            background: rgba(174, 194, 224, 0.5);
+            animation: rain-fall 0.5s linear infinite;
+            border-radius: 50%;
+        }
+        @keyframes rain-fall {
+            to {
+                transform: translateY(100px);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>WeatherNow</h1>
+    <form id="weather-form">
+        <input type="text" id="city" name="city" placeholder="Enter city name" required>
+        <button type="submit">Get Weather</button>
+    </form>
+
+    <p id="error"></p>
+
+    <div id="weather-result">
+        <h2 id="name"></h2>
+        <p id="description"></p>
+        <p id="temperature"></p>
+        <img id="weather-animation" alt="Weather animation">
+    </div>
+    <div class="rain" id="rain-container" style="display:none;"></div>
+
+<script>
+    document.getElementById('weather-form').onsubmit = async function(event) {
+        event.preventDefault();
+        document.getElementById('error').textContent = '';
+        document.getElementById('weather-result').style.display = 'none';
+
+        const formData = new FormData(event.target);
+        const response = await fetch('/get_weather', {method:'POST', body: formData});
+        const data = await response.json();
+
+        if (response.ok) {
+            document.getElementById('name').textContent = data.name;
+            document.getElementById('description').textContent = data.description;
+            document.getElementById('temperature').textContent = `🌡Temperature: ${data.temperature}°C`;
+            document.getElementById('weather-result').style.display = 'block';
+
+            const weatherAnim = document.getElementById('weather-animation');
+            const rainContainer = document.getElementById('rain-container');
+            rainContainer.innerHTML = '';
+
+            const desc = data.description.toLowerCase();
+
+            if (desc.includes('rain')) {
+                //CSS rain animation
+                weatherAnim.style.display = 'none';
+                rainContainer.style.display = 'block';
+                //Rain drops
+                for (let i = 0; i < 10; i++) {
+                    const drop = document.createElement('div');
+                    drop.className = 'rain-drop';
+                    drop.style.left = `${10 + i * 8}px`;
+                    drop.style.animationDelay = `${i * 0.1}s`;
+                    rainContainer.appendChild(drop);
+                }
+            } else if (desc.includes('snow')) {
+                weatherAnim.src = 'https://i.gifer.com/YWuH.gif'; //Snow GIF
+                weatherAnim.style.display = 'block';
+                rainContainer.style.display = 'none';
+            } else if (desc.includes('cloud')) {
+                weatherAnim.src = 'https://i.gifer.com/7RtV.gif'; //Clouds animation GIF
+                weatherAnim.style.display = 'block';
+                rainContainer.style.display = 'none';
+            } else if (desc.includes('thunderstorm')) {
+                weatherAnim.src = 'https://i.gifer.com/7TDT.gif'; //Thunderstorm animation GIF
+                weatherAnim.style.display = 'block';
+                rainContainer.style.display = 'none';
+            } else if (desc.includes('drizzle')) {
+                weatherAnim.src = 'https://i.gifer.com/7sd1.gif'; //Drizzle animation GIF
+                weatherAnim.style.display = 'block';
+                rainContainer.style.display = 'none';
+            } else if (desc.includes('fog') || desc.includes('mist') || desc.includes('haze')) {
+                weatherAnim.src = 'https://i.gifer.com/19Q3.gif'; //Mist animation GIF
+                weatherAnim.style.display = 'block';
+                rainContainer.style.display = 'none';
+            } else if (desc.includes('clear')) {
+                weatherAnim.src = 'https://i.gifer.com/1d.gif'; //Sun animation GIF
+                weatherAnim.style.display = 'block';
+                rainContainer.style.display = 'none';
+            } else {
+                weatherAnim.src = '';
+                weatherAnim.style.display = 'none';
+                rainContainer.style.display = 'none';
+            }
+        } else {
+            document.getElementById('error').textContent = data.error;
+        }
+    };
+</script>
+</body>
+</html>
