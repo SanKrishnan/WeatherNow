@@ -24,7 +24,7 @@ This project was initially built as a desktop application with Tkinter and has b
 
 1.  **Clone the repository:**
     ```sh
-    git clone https://github.com/yourusername/weather-dashboard.git
+    git clone https://github.com/SanKrishnan/WeatherNow.git
     cd weather-dashboard
     ```
 
@@ -50,8 +50,8 @@ This project was initially built as a desktop application with Tkinter and has b
 
 ## Contributing
 
-Contributions, issues, and feature requests are welcome. Feel free to check the [issues page](https://github.com/SanKrishnan/weather-dashboard/issues).
+Contributions, issues, and feature requests are welcome. Feel free to check the [issues page](https://github.com/SanKrishnan/WeatherNow/issues).
 
 ## License
 
-This project is licensed under the [MIT License](https://github.com/SanKrishnan/weather-dashboard/blob/main/LICENSE).
+This project is licensed under the [MIT License](https://github.com/SanKrishnan/WeatherNow/LICENSE).
