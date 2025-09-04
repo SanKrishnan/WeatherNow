@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify, send_from_directory
 import requests
 import os
 try:
-    app = Flask(__name__, static_folder='WeatherNow')
+    app = Flask(__name__, static_folder='.')
 except Exception:
     print("File not found!!!")
 
@@ -37,5 +37,6 @@ def get_weather():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
 
 
